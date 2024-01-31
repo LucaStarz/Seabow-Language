@@ -232,7 +232,12 @@ namespace core
             Token name = this.Advance();
             if (name.Type != TokenType.TokenIdentifier)
             {
-                this.diagnostics.Add()
+                this.diagnostics.Add(new Diagnostic(
+                    DiagnosticType.DiagError,
+                    name.Position,
+                    "SyntaxError: 'func' keyword need a correct function name after"
+                ));
+                return new NodeNoOperation();
             }
             return new NodeNoOperation();
         }

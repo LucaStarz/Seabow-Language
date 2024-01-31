@@ -12,4 +12,4 @@ build_property.EnableSingleFileAnalyzer = true
 build_property.EnableTrimAnalyzer = 
 build_property.IncludeAllContentForSelfExtract = 
 build_property.RootNamespace = seabow
-build_property.ProjectDir = /home/lucas/Bureau/Programmation/C#/seabow/seabow/
+build_property.ProjectDir = /home/lucas/Bureau/Programmation/C#/Seabow-Language/seabow/
