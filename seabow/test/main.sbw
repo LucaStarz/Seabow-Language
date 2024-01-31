@@ -1,0 +1,2 @@
+var i: ulong = 123 + 12, j: int = 6 * 3;
+const h: bool = false
