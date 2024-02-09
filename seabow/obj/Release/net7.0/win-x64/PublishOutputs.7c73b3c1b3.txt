@@ -1,2 +1,0 @@
-/home/lucas/Bureau/Programmation/C#/Seabow-Language/seabow/bin/Release/net7.0/win-x64/publish/seabow.pdb
-/home/lucas/Bureau/Programmation/C#/Seabow-Language/seabow/bin/Release/net7.0/win-x64/publish/seabow.exe

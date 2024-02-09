@@ -1,3 +1,4 @@
+using core;
 using utils;
 
 namespace values
@@ -83,110 +84,110 @@ namespace values
         public abstract ValueKind GetValueKind();
         public abstract bool IsNull();
 
-        public virtual Value Plus(Value other)
+        public virtual Element Plus(Value other)
         {
             ValueType t1 = (this.Convert(ref Globals.ToType) as ValueType)!;
             ValueType t2 = (other.Convert(ref Globals.ToType) as ValueType)!;
-            return Value.BinaryOpError(ref t1, ref t2, "+");
+            return new Element(0, Value.BinaryOpError(ref t1, ref t2, "+"), ref Globals.DIAG_MODIFIERS);
         }
 
-        public virtual Value LeftPlus()
+        public virtual Element LeftPlus()
         {
             ValueType t = (this.Convert(ref Globals.ToType) as ValueType)!;
-            return Value.UnaryOpError(ref t, "+");
+            return new Element(0, Value.UnaryOpError(ref t, "+"), ref Globals.DIAG_MODIFIERS);
         }
 
-        public virtual Value PlusEquals(Value other)
+        public virtual Element PlusEquals(Value other)
         {
             ValueType t1 = (this.Convert(ref Globals.ToType) as ValueType)!;
             ValueType t2 = (other.Convert(ref Globals.ToType) as ValueType)!;
-            return Value.BinaryOpError(ref t1, ref t2, "+=");
+            return new Element(0, Value.BinaryOpError(ref t1, ref t2, "+="), ref Globals.DIAG_MODIFIERS);
         }
         
-        public virtual Value LeftIncr()
+        public virtual Element LeftIncr()
         {
             ValueType t = (this.Convert(ref Globals.ToType) as ValueType)!;
-            return Value.UnaryOpError(ref t, "left ++");
+            return new Element(0, Value.UnaryOpError(ref t, "left ++"), ref Globals.DIAG_MODIFIERS);
         }
 
-        public virtual Value RightIncr()
+        public virtual Element RightIncr()
         {
             ValueType t = (this.Convert(ref Globals.ToType) as ValueType)!;
-            return Value.UnaryOpError(ref t, "right ++");
+            return new Element(0, Value.UnaryOpError(ref t, "right ++"), ref Globals.DIAG_MODIFIERS);
         }
 
-        public virtual Value Minus(Value other)
+        public virtual Element Minus(Value other)
         {
             ValueType t1 = (this.Convert(ref Globals.ToType) as ValueType)!;
             ValueType t2 = (other.Convert(ref Globals.ToType) as ValueType)!;
-            return Value.BinaryOpError(ref t1, ref t2, "-");
+            return new Element(0, Value.BinaryOpError(ref t1, ref t2, "-"), ref Globals.DIAG_MODIFIERS);
         }
 
-        public virtual Value LeftMinus()
+        public virtual Element LeftMinus()
         {
             ValueType t = (this.Convert(ref Globals.ToType) as ValueType)!;
-            return Value.UnaryOpError(ref t, "-");
+            return new Element(0, Value.UnaryOpError(ref t, "-"), ref Globals.DIAG_MODIFIERS);
         }
 
-        public virtual Value MinusEquals(Value other)
+        public virtual Element MinusEquals(Value other)
         {
             ValueType t1 = (this.Convert(ref Globals.ToType) as ValueType)!;
             ValueType t2 = (other.Convert(ref Globals.ToType) as ValueType)!;
-            return Value.BinaryOpError(ref t1, ref t2, "-=");
+            return new Element(0, Value.BinaryOpError(ref t1, ref t2, "-="), ref Globals.DIAG_MODIFIERS);
         }
 
-        public virtual Value LeftDecr()
+        public virtual Element LeftDecr()
         {
             ValueType t = (this.Convert(ref Globals.ToType) as ValueType)!;
-            return Value.UnaryOpError(ref t, "left --");
+            return new Element(0, Value.UnaryOpError(ref t, "left --"), ref Globals.DIAG_MODIFIERS);
         }
 
-        public virtual Value RightDecr()
+        public virtual Element RightDecr()
         {
             ValueType t = (this.Convert(ref Globals.ToType) as ValueType)!;
-            return Value.UnaryOpError(ref t, "right --");
+            return new Element(0, Value.UnaryOpError(ref t, "right --"), ref Globals.DIAG_MODIFIERS);
         }
 
-        public virtual Value Times(Value other)
+        public virtual Element Times(Value other)
         {
             ValueType t1 = (this.Convert(ref Globals.ToType) as ValueType)!;
             ValueType t2 = (other.Convert(ref Globals.ToType) as ValueType)!;
-            return Value.BinaryOpError(ref t1, ref t2, "*");
+            return new Element(0, Value.BinaryOpError(ref t1, ref t2, "*"), ref Globals.DIAG_MODIFIERS);
         }
 
-        public virtual Value TimesEquals(Value other)
+        public virtual Element TimesEquals(Value other)
         {
             ValueType t1 = (this.Convert(ref Globals.ToType) as ValueType)!;
             ValueType t2 = (other.Convert(ref Globals.ToType) as ValueType)!;
-            return Value.BinaryOpError(ref t1, ref t2, "*=");
+            return new Element(0, Value.BinaryOpError(ref t1, ref t2, "*="), ref Globals.DIAG_MODIFIERS);
         }
 
-        public virtual Value Div(Value other)
+        public virtual Element Div(Value other)
         {
             ValueType t1 = (this.Convert(ref Globals.ToType) as ValueType)!;
             ValueType t2 = (other.Convert(ref Globals.ToType) as ValueType)!;
-            return Value.BinaryOpError(ref t1, ref t2, "/");
+            return new Element(0, Value.BinaryOpError(ref t1, ref t2, "/"), ref Globals.DIAG_MODIFIERS);
         }
 
-        public virtual Value DivEquals(Value other)
+        public virtual Element DivEquals(Value other)
         {
             ValueType t1 = (this.Convert(ref Globals.ToType) as ValueType)!;
             ValueType t2 = (other.Convert(ref Globals.ToType) as ValueType)!;
-            return Value.BinaryOpError(ref t1, ref t2, "/=");
+            return new Element(0, Value.BinaryOpError(ref t1, ref t2, "/="), ref Globals.DIAG_MODIFIERS);
         }
 
-        public virtual Value Rem(Value other)
+        public virtual Element Rem(Value other)
         {
             ValueType t1 = (this.Convert(ref Globals.ToType) as ValueType)!;
             ValueType t2 = (other.Convert(ref Globals.ToType) as ValueType)!;
-            return Value.BinaryOpError(ref t1, ref t2, "%");
+            return new Element(0, Value.BinaryOpError(ref t1, ref t2, "%"), ref Globals.DIAG_MODIFIERS);
         }
 
-        public virtual Value RemEquals(Value other)
+        public virtual Element RemEquals(Value other)
         {
             ValueType t1 = (this.Convert(ref Globals.ToType) as ValueType)!;
             ValueType t2 = (other.Convert(ref Globals.ToType) as ValueType)!;
-            return Value.BinaryOpError(ref t1, ref t2, "%=");
+            return new Element(0, Value.BinaryOpError(ref t1, ref t2, "%="), ref Globals.DIAG_MODIFIERS);
         }
 
         public virtual Value BitwiseXOr(Value other)
@@ -231,11 +232,11 @@ namespace values
             return Value.BinaryOpError(ref t1, ref t2, "|=");
         }
 
-        public virtual Value Assign(Value other)
+        public virtual Element Assign(Value other)
         {
             ValueType t1 = (this.Convert(ref Globals.ToType) as ValueType)!;
             ValueType t2 = (other.Convert(ref Globals.ToType) as ValueType)!;
-            return Value.BinaryOpError(ref t1, ref t2, "=");
+            return new Element(0, Value.BinaryOpError(ref t1, ref t2, "="), ref Globals.DIAG_MODIFIERS);
         }
 
         public virtual Value Get(Value other)

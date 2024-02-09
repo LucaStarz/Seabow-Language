@@ -1,5 +1,3 @@
-using System.Globalization;
-
 namespace utils
 {
     public enum DiagnosticType: byte

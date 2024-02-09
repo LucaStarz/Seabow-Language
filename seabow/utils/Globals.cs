@@ -26,7 +26,7 @@ namespace utils
             {"private", TokenType.TokenPrivate},
             {"protected", TokenType.TokenProtected},
             {"public", TokenType.TokenPublic},
-            {"readable", TokenType.TokenReadable},
+            {"readonly", TokenType.TokenReadonly},
             {"global", TokenType.TokenGlobal},
             {"undel", TokenType.TokenUndel},
 
@@ -69,34 +69,9 @@ namespace utils
         public static uint SEABOW_MINOR = 1;
         public static uint SEABOW_PATCH = 0;
 
-        public static string HELPS = """
-        seabow is a tool for managing seabow files (.sbw, .sbb, .sbl)
-
-        Usage:
-            seabow <command> [options]
-        
-        List of seabow commands:
-            <none>  start seabow interpreter
-            int     start seabow interpreter or interpret a seabow source code file if provided (.sbw)
-            cmp     compile a seabow source code file to a seabow bytecode file (.sbw -> .sbb)
-            build   compile a seabow source code file to a native executable (.sbw -> .exe, ...)
-            run     interpret a seabow bytecode file (.sbb)
-            lib     compile a seabow source code file to a seabow bytecode library file (.sbw -> .sbl)
-            help    show helps for seabow command or for a specified library if provided [or '-h', '--help']
-            list    list all installed seabow libraries [or '-l']
-        
-        List of seabow options:
-            -o <file>, --output <file>  specify the output file path for compilation process
-            <file>                      specify the main seabow source code file of the project to use as entry point
-
-            --debug                     activate debug functionalities
-
-            -opt, --optimization        disable all optimizations during the compilation process
-            --unused                    disabled optimizations for unused elements during the compilation process
-        """;
+        public static string HELPS = "seabow is a tool for managing seabow files (.sbw, .sbb, .sbl)\n\nUsage:\n\tseabow <command> [arguments]\n\nList of seabow commands:\n\t<none>\tstart seabow interpreter\n\tint\tstart seabow interpreter or interpret seabow source code if provided\n\tcmp\tcompile seabow source code to bytecode file (.sbw -> .sbb)\n\tbuild\tcompile seabow source code to a native executable\n\trun\tinterpret a seabow bytecode file\n\tlib\tcompile seabow source code into seabow bytecode library (.sbw -> .sbl)\n\thelp\tshow helps for seabow or for a specified library if given\n\tlist\tlist all installed seabow libraries";
     
-        public static byte MODIFIER_NONE = 0;
-        public static byte MODIFIER_CONSTANT = 1;
-        public static byte MODIFIER_GLOBAL = 2;
+        public static ElementModifier[] EMPTY_MODIFIERS = Array.Empty<ElementModifier>();
+        public static ElementModifier[] DIAG_MODIFIERS = { ElementModifier.ModifierDiagnostic };
     }
 }

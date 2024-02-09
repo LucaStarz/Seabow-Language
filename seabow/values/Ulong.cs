@@ -1,10 +1,11 @@
+using core;
 using utils;
 
 namespace values
 {
     public sealed class ValueUlong: Value
     {
-        public ulong? Value{get;}
+        public ulong? Value{get; private set;}
         
         public ValueUlong(ulong? val)
         {
@@ -19,6 +20,19 @@ namespace values
         public override bool IsNull()
         {
             return this.Value == null;
+        }
+
+        public override Element Assign(Value other)
+        {
+            switch (other.GetValueKind())
+            {
+                case ValueKind.ValueUlong: {
+                    this.Value = (other as ValueUlong)!.Value;
+                    return new Element(0, this, ref Globals.EMPTY_MODIFIERS);
+                }
+            }
+
+            return base.Assign(other);
         }
 
         public override Value Convert(ref ValueType dest)

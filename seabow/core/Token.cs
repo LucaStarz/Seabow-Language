@@ -10,7 +10,7 @@ namespace core
         TokenClass, TokenConstructor, TokenInterface,
 
         TokenAbstract, TokenVirtual, TokenSealed, TokenOperator, TokenStatic, TokenOverride,
-        TokenPrivate, TokenProtected, TokenPublic, TokenReadable,
+        TokenPrivate, TokenProtected, TokenPublic, TokenReadonly,
         TokenGlobal, TokenUndel,
 
         TokenBreak, TokenContinue, TokenReturn,

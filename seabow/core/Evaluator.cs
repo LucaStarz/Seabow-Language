@@ -4,17 +4,23 @@ using values;
 
 namespace core
 {
+    public enum ElementModifier: byte {
+        ModifierLoopControl, ModifierDiagnostic, ModifierNotPrint,
+
+        ModifierVariable, ModifierConstant, ModifierUnassignedConstant
+    }
+
     public sealed class Element
     {
         public nuint Index{get;}
         public Value Value{get;}
-        public byte Modifier{get;}
+        public ElementModifier[] Modifiers{get; set;}
 
-        public Element(nuint index, Value val, byte mod)
+        public Element(nuint index, Value val, ref ElementModifier[] mods)
         {
             this.Index = index;
             this.Value = val;
-            this.Modifier = mod;
+            this.Modifiers = mods;
         }
     }
 
@@ -32,10 +38,13 @@ namespace core
         public Value? Evaluate(NodeCompound root)
         {
             this.globalIndex = 0;
-            return this.EvaluateCompound(root);
+            Element? result = this.EvaluateCompound(root);
+            return result == null ? null : (
+                result.Modifiers.Contains(ElementModifier.ModifierNotPrint) ? null : result.Value
+            );
         }
 
-        private Value? EvaluateNode(Node node)
+        private Element? EvaluateNode(Node node)
         {
             switch (node.GetNodeType())
             {
@@ -60,10 +69,10 @@ namespace core
             }
         }
 
-        private Value? EvaluateCompound(NodeCompound cmp)
+        private Element? EvaluateCompound(NodeCompound cmp)
         {
             this.globalIndex++;
-            Value? ret = null;
+            Element? ret = null;
             foreach (Node node in cmp.Nodes)
             {
                 ret = this.EvaluateNode(node);
@@ -73,39 +82,54 @@ namespace core
             return ret;
         }
 
-        private Value? EvaluateLiteral(NodeLiteral lit)
+        private Element? EvaluateLiteral(NodeLiteral lit)
         {
-            return lit.Value;
+            return new Element(this.globalIndex, lit.Value, ref Globals.EMPTY_MODIFIERS);
         }
 
-        private Value? GetAssignedValue(string? kind, Node? expression)
+        private Element? GetAssignValue(string? kind, Node? expression)
         {
-            Value? val = null;
+            Element? elt = null;
             if (kind != null)
-                val = Value.GetDefaultValue(kind);
-            
-            if (expression != null)
             {
+                Value? val = Value.GetDefaultValue(kind);
                 if (val != null)
                 {
-                    Value? result = this.EvaluateNode(expression);
-                    Value res = val.Assign(result == null ? new ValueNull() : result);
-                    if (res != val)
+                    ElementModifier[] mods = { ElementModifier.ModifierUnassignedConstant };
+                    elt = new(0, val, ref mods);
+                }
+            }
+
+            if (expression != null)
+            {
+                if (elt != null)
+                {
+                    Element? result = this.EvaluateNode(expression);
+                    if (result == null)
+                        return null;
+                    
+                    Element res = elt.Value.Assign(result.Value);
+                    if (res.Modifiers.Contains(ElementModifier.ModifierDiagnostic))
                     {
-                        Diagnostic diag = new(DiagnosticType.DiagError, null, ((res as ValueError)!.Convert(ref Globals.ConvToString) as ValueString)!.Value!);
+                        ValueError err = (res.Value as ValueError)!;
+                        Diagnostic diag = new(DiagnosticType.DiagError, null, String.Format("{0}: {1}", err.Name, err.Details));
                         diag.Print();
                         return null;
                     }
                 }
                 else
-                    val = this.EvaluateNode(expression);
+                {
+                    elt = this.EvaluateNode(expression);
+                    if (elt == null)
+                        return null;
+                }
+                elt.Modifiers = Globals.EMPTY_MODIFIERS;
             }
 
-            val ??= new ValueNull();
-            return val;
+            return elt;
         }
 
-        private Value? EvaluateVariableDeclaration(NodeVariableDeclaration declaration)
+        private Element? EvaluateVariableDeclaration(NodeVariableDeclaration declaration)
         {
             if (this.elements.ContainsKey(declaration.Name))
             {
@@ -114,19 +138,16 @@ namespace core
                 return null;
             }
             
-            Value? val = this.GetAssignedValue(declaration.Kind, declaration.Expression);
+            Element? val = this.GetAssignValue(declaration.Kind, declaration.Expression);
             if (val == null)
-            {
-                Diagnostic diag = new(DiagnosticType.DiagError, null, "RuntimeError: Cannot create the variable due to previous error");
-                diag.Print();
                 return null;
-            }
 
-            this.elements.Add(declaration.Name, new Element(this.globalIndex, val, Globals.MODIFIER_NONE));
+            ElementModifier[] mods = { ElementModifier.ModifierVariable };
+            this.elements.Add(declaration.Name, new Element(this.globalIndex, val.Value, ref mods));
             return null;
         }
 
-        private Value? EvaluateConstantDeclaration(NodeConstantDeclaration declaration)
+        private Element? EvaluateConstantDeclaration(NodeConstantDeclaration declaration)
         {
             if (this.elements.ContainsKey(declaration.Name))
             {
@@ -135,22 +156,22 @@ namespace core
                 return null;
             }
             
-            Value? val = this.GetAssignedValue(declaration.Kind, declaration.Expression);
+            Element? val = this.GetAssignValue(declaration.Kind, declaration.Expression);
             if (val == null)
-            {
-                Diagnostic diag = new(DiagnosticType.DiagError, null, "RuntimeError: Cannot create the variable due to previous error");
-                diag.Print();
                 return null;
-            }
 
-            this.elements.Add(declaration.Name, new Element(this.globalIndex, val, Globals.MODIFIER_CONSTANT));
+            ElementModifier[] mods = { ElementModifier.ModifierConstant };
+            if (val.Modifiers.Contains(ElementModifier.ModifierUnassignedConstant))
+                mods[0] = ElementModifier.ModifierUnassignedConstant;
+
+            this.elements.Add(declaration.Name, new Element(this.globalIndex, val.Value, ref mods));
             return null;
         }
 
-        private Value? EvaluateVarConstAccess(NodeVarConstAccess access)
+        private Element? EvaluateVarConstAccess(NodeVarConstAccess access)
         {
             if (this.elements.ContainsKey(access.Name))
-                return this.elements[access.Name].Value;
+                return this.elements[access.Name];
             else
             {
                 Diagnostic diag = new(DiagnosticType.DiagError, null, String.Format("RuntimeError: Variable or constant '{0}' does not exists", access.Name));
@@ -159,10 +180,49 @@ namespace core
             }
         }
 
-        private Value? EvaluateBinaryOperation(NodeBinary binary)
+        private Element? EvaluateBinaryOperation(NodeBinary binary)
         {
             switch (binary.OpType)
             {
+                case TokenType.TokenEquals: {
+                    Element? left = this.EvaluateNode(binary.Left);
+                    if (left == null)
+                        return null;
+
+                    if (left.Modifiers.Contains(ElementModifier.ModifierConstant))
+                    {
+                        Diagnostic diag = new(DiagnosticType.DiagError, null, "AssignError: Can not assign a constant to another value");
+                        diag.Print();
+                        return null;
+                    }
+
+                    if (!left.Modifiers.Contains(ElementModifier.ModifierVariable) && !left.Modifiers.Contains(ElementModifier.ModifierUnassignedConstant))
+                    {
+                        Diagnostic diag = new(DiagnosticType.DiagError, null, "AssignError: Can not assign a value to a literal value");
+                        diag.Print();
+                        return null;
+                    }
+
+                    Element? right = this.EvaluateNode(binary.Right!);
+                    if (right == null)
+                        return null;
+
+                    Element elt = left.Value.Assign(right.Value);
+                    if (elt.Modifiers.Contains(ElementModifier.ModifierDiagnostic))
+                    {
+                        ValueError err = (elt.Value as ValueError)!;
+                        Diagnostic diag = new(DiagnosticType.DiagError, null, String.Format("{0}: {1}", err.Name, err.Details));
+                        diag.Print();
+                        return null;
+                    }
+
+                    if (left.Modifiers.Contains(ElementModifier.ModifierUnassignedConstant))
+                        left.Modifiers[Array.IndexOf(left.Modifiers, ElementModifier.ModifierUnassignedConstant)] = ElementModifier.ModifierConstant;
+
+                    ElementModifier[] mods = { ElementModifier.ModifierNotPrint };
+                    Element ret = new(0, elt.Value, ref mods);
+                    return ret;
+                }
 
                 default: {
                     Diagnostic diag = new(DiagnosticType.DiagError, null, "RuntimeError: An undefined binary operation occured");

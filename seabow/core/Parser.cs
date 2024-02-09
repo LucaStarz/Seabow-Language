@@ -235,7 +235,7 @@ namespace core
                 this.diagnostics.Add(new Diagnostic(
                     DiagnosticType.DiagError,
                     name.Position,
-                    "SyntaxError: 'func' keyword need a correct function name after"
+                    "SyntaxError: 'func' keyword need a function name after to declare a function"
                 ));
                 return new NodeNoOperation();
             }
