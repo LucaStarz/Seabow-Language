@@ -332,6 +332,16 @@ namespace core
                     return new NodeLiteral(new ValueDouble(result));
                 }
 
+                case TokenType.TokenBigInteger: {
+                    UInt128.TryParse(current.Content, out UInt128 result);
+                    return new NodeLiteral(new ValueUint128(result));
+                }
+
+                case TokenType.TokenBigDecimal: {
+                    decimal.TryParse(current.Content, out decimal result);
+                    return new NodeLiteral(new ValueLdouble(result));
+                }
+
                 case TokenType.TokenFalse: {
                     return new NodeLiteral(new ValueBool(false));
                 }

@@ -1,3 +1,4 @@
+using core;
 using utils;
 
 namespace values
@@ -29,47 +30,47 @@ namespace values
             return this.Kind == ValueKind.ValueUndefined;
         }
 
-        public override Value Convert(ref ValueType dest)
+        public override Element Convert(ref ValueType dest)
         {
+            Value? val = null;
             switch (dest.Kind)
             {
                 case ValueKind.ValueString: {
                     if (this.IsNull())
-                        return new ValueString("null");
-                    
-                    string? err = values.Value.ValueKindToString(this.Kind) + (this.Completion == null ? "" : String.Format("[{0}]", this.Completion));
-                    if (err == null)
-                    {
-                        
-                    }
+                        val = new ValueString("null");
+                    else {
+                        string? err = values.Value.ValueKindToString(this.Kind) + (this.Completion == null ? "" : String.Format("[{0}]", this.Completion));
+                        if (err == null)
+                        {
+                            
+                        }
 
-                    return new ValueString(err);
-                }
+                        val = new ValueString(err);
+                    }
+                } break;
 
                 case ValueKind.ValueType: {
-                    return new ValueType(ValueKind.ValueType, null);
-                }
+                    val = new ValueType(ValueKind.ValueType, null);
+                } break;
             }
 
-            ValueType from = (this.Convert(ref Globals.ToType) as ValueType)!;
-            return values.Value.ConvertionError(ref from, ref dest);
+            if (val == null) {
+                ValueType from = (this.Convert(ref Globals.ToType).Value as ValueType)!;
+                return new Element(0, values.Value.ConvertionError(ref from, ref dest), ref Globals.DIAG_MODIFIERS);
+            } else
+                return new Element(0, val, ref Globals.EMPTY_MODIFIERS);
         }
 
-        public override Value AutoConvert(ref ValueType dest)
+        public override Element AutoConvert(ref ValueType dest)
         {
-            switch (dest.Kind)
-            {
-                case ValueKind.ValueString: {
-                    if (this.IsNull())
-                        return new ValueString("null");
-                    
-                    string err = values.Value.ValueKindToString(this.Kind) + (this.Completion == null ? "" : String.Format("[{0}]", this.Completion));
-                    return new ValueString(err);
-                }
-            }
 
-            ValueType from = (this.Convert(ref Globals.ToType) as ValueType)!;
-            return values.Value.AutoConvertionError(ref from, ref dest);
+            Value? val = null;
+
+            if (val == null) {
+                ValueType from = (this.Convert(ref Globals.ToType).Value as ValueType)!;
+                return new Element(0, values.Value.AutoConvertionError(ref from, ref dest), ref Globals.DIAG_MODIFIERS);
+            } else
+                return new Element(0, val, ref Globals.EMPTY_MODIFIERS);
         }
     }
 }

@@ -33,8 +33,8 @@ namespace core
                     }
                     else
                     {
-                        Value? result = evaluator.Evaluate(root);
-                        if (result != null)
+                        Value result = evaluator.Evaluate(root);
+                        if (result.GetValueKind() != ValueKind.ValueNull)
                             Console.WriteLine(result);
                     }
                 }

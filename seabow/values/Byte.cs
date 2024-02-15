@@ -1,3 +1,4 @@
+using core;
 using utils;
 
 namespace values
@@ -21,28 +22,37 @@ namespace values
             return this.Value == null;
         }
 
-        public override Value Convert(ref ValueType dest)
+        public override Element Convert(ref ValueType dest)
         {
+            Value? val = null;
             switch (dest.Kind)
             {
                 case ValueKind.ValueString: {
-                    return this.IsNull() ? new ValueString("null")
+                    val = this.IsNull() ? new ValueString("null")
                         : new ValueString(this.Value.ToString());
-                }
+                } break;
 
                 case ValueKind.ValueType: {
-                    return new ValueType(ValueKind.ValueBool, null);
-                }
+                    val = new ValueType(ValueKind.ValueByte, null);
+                } break;
             }
 
-            ValueType from = (this.Convert(ref Globals.ToType) as ValueType)!;
-            return values.Value.ConvertionError(ref from, ref dest);
+            if (val == null) {
+                ValueType from = (this.Convert(ref Globals.ToType).Value as ValueType)!;
+                return new Element(0, values.Value.ConvertionError(ref from, ref dest), ref Globals.DIAG_MODIFIERS);
+            } else
+                return new Element(0, val, ref Globals.EMPTY_MODIFIERS);
         }
 
-        public override Value AutoConvert(ref ValueType dest)
+        public override Element AutoConvert(ref ValueType dest)
         {
-            ValueType from = (this.Convert(ref Globals.ToType) as ValueType)!;
-            return values.Value.AutoConvertionError(ref from, ref dest);
+            Value? val = null;
+
+            if (val == null) {
+                ValueType from = (this.Convert(ref Globals.ToType).Value as ValueType)!;
+                return new Element(0, values.Value.AutoConvertionError(ref from, ref dest), ref Globals.DIAG_MODIFIERS);
+            } else
+                return new Element(0, val, ref Globals.EMPTY_MODIFIERS);
         }
     }
 }

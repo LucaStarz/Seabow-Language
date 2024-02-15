@@ -3,54 +3,37 @@ using utils;
 
 namespace values
 {
-    public sealed class ValueError: Value
+    public sealed class ValueLdouble: Value
     {
-        public string? Name{get;}
-        public string? Details{get;}
-        public List<string>? Context{get; private set;}
+        public decimal? Value{get; private set;}
 
-        public ValueError(string? name, string? details)
+        public ValueLdouble(decimal? val)
         {
-            this.Name = name;
-            this.Details = details;
-            this.Context = null;
-        }
-
-        public void AddContext(string ctxt)
-        {
-            if (this.Context == null)
-                this.Context = new List<string>();
-            
-            this.Context.Add(ctxt);
+            this.Value = val;
         }
 
         public override ValueKind GetValueKind()
         {
-            return ValueKind.ValueError;
+            return ValueKind.ValueLdouble;
         }
 
         public override bool IsNull()
         {
-            return this.Name == null;
+            return this.Value == null;
         }
 
         public override Element Convert(ref ValueType dest)
         {
             Value? val = null;
-
             switch (dest.Kind)
             {
                 case ValueKind.ValueString: {
-                    if (this.IsNull())
-                        val = new ValueString("null");
-                    else {
-                        string err = this.Name! + ((this.Details == null) ? "" : ": " + this.Details!);
-                        val = new ValueString(err);
-                    }
+                    val = this.IsNull() ? new ValueString("null")
+                        : new ValueString(this.Value.ToString());
                 } break;
 
                 case ValueKind.ValueType: {
-                    val = new ValueType(ValueKind.ValueError, null);
+                    val = new ValueType(ValueKind.ValueLdouble, null);
                 } break;
             }
 

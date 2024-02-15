@@ -1,3 +1,6 @@
+using core;
+using utils;
+
 namespace values
 {
     public sealed class ValueAny: Value
@@ -19,14 +22,26 @@ namespace values
             return this.Value == null;
         }
 
-        public override Value Convert(ref ValueType dest)
+        public override Element Convert(ref ValueType dest)
         {
-            throw new NotImplementedException();
+            Element? elt = this.Value?.Convert(ref dest);
+
+            if (elt == null) {
+                ValueType from = (this.Convert(ref Globals.ToType).Value as ValueType)!;
+                return new Element(0, values.Value.ConvertionError(ref from, ref dest), ref Globals.DIAG_MODIFIERS);
+            } else
+                return elt;
         }
 
-        public override Value AutoConvert(ref ValueType dest)
+        public override Element AutoConvert(ref ValueType dest)
         {
-            throw new NotImplementedException();
+            Element? elt = this.Value?.Convert(ref dest);
+
+            if (elt == null) {
+                ValueType from = (this.Convert(ref Globals.ToType).Value as ValueType)!;
+                return new Element(0, values.Value.AutoConvertionError(ref from, ref dest), ref Globals.DIAG_MODIFIERS);
+            } else
+                return elt;
         }
     }
 }
