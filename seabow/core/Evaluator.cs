@@ -135,7 +135,7 @@ namespace core
             
             Element val = this.GetAssignValue(declaration.Kind, declaration.Expression);
             if (val.Modifiers.Contains(ElementModifier.ModifierDiagnostic))
-                return thiss.AddContextAndReturn(ref val, String.Format("In var declaration '{0}':", declaration.Name));
+                return this.AddContextAndReturn(ref val, String.Format("In var declaration '{0}':", declaration.Name));
 
             ElementModifier[] mods = { ElementModifier.ModifierVariable };
             this.elements.Add(declaration.Name, new Element(this.globalIndex, val.Value, ref mods));
